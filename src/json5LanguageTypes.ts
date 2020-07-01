@@ -2,11 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector } from './jsonContributions';
-import { JSONSchema } from './jsonSchema';
+import { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector } from './json5Contributions';
+import { JSON5Schema } from './json5Schema';
 import { MarkupKind } from 'vscode-languageserver-types';
 
-export { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector, JSONSchema };
+export { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector, JSON5Schema as JSONSchema };
 export { TextDocument } from 'vscode-languageserver-textdocument';
 export * from 'vscode-languageserver-types';
 
@@ -125,7 +125,7 @@ export interface SchemaConfiguration {
 	 * The schema for the given URI.
 	 * If no schema is provided, the schema will be fetched with the schema request service (if available).
 	 */
-	schema?: JSONSchema;
+	schema?: JSON5Schema;
 }
 
 export interface WorkspaceContextService {

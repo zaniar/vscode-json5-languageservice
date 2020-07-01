@@ -1,5 +1,5 @@
-# vscode-json-languageservice
-JSON language service extracted from VSCode to be reused, e.g in the Monaco editor.
+# vscode-json5-languageservice
+JSON5 derived from [vscode-json-languageservice](https://github.com/microsoft/vscode-json-languageservice).
 
 [![npm Package](https://img.shields.io/npm/v/vscode-json-languageservice.svg?style=flat-square)](https://www.npmjs.org/package/vscode-json-languageservice)
 [![NPM Downloads](https://img.shields.io/npm/dm/vscode-json-languageservice.svg)](https://npmjs.org/package/vscode-json-languageservice)
@@ -20,9 +20,9 @@ and the Monaco editor.
  - *getFoldingRanges* gets folding ranges for the given document
  - *getSelectionRanges* gets selection ranges for a given location.
 
- - use *parseJSONDocument* create a JSON document from source code, or *newJSONDocument* to create the document from an AST.
+ - use *parseJSON5Document* create a JSON5 document from source code, or *newJSON5Document* to create the document from an AST.
 
 Installation
 ------------
 
-    npm install --save vscode-json-languageservice
+    npm install --save zaniar/vscode-json5-languageservice

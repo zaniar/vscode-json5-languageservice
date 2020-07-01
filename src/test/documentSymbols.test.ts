@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import * as JsonSchema from '../jsonSchema';
+import * as JsonSchema from '../json5Schema';
 
 import {
 	Thenable, getLanguageService,
 	ClientCapabilities, DocumentSymbolsContext,
 	TextDocument, Color, SymbolInformation, SymbolKind, Range, Position, TextEdit, DocumentSymbol
-} from "../jsonLanguageService";
+} from "../json5LanguageService";
 import { colorFrom256RGB } from '../utils/colors';
 
 suite('JSON Document Symbols', () => {
@@ -24,7 +24,7 @@ suite('JSON Document Symbols', () => {
 		const ls = getLanguageService({ schemaRequestService, clientCapabilities: ClientCapabilities.LATEST });
 
 		const document = TextDocument.create(uri, 'json', 0, value);
-		const jsonDoc = ls.parseJSONDocument(document);
+		const jsonDoc = ls.parseJSON5Document(document);
 		return ls.findDocumentSymbols(document, jsonDoc, context);
 	}
 
@@ -33,11 +33,11 @@ suite('JSON Document Symbols', () => {
 		const ls = getLanguageService({ schemaRequestService, clientCapabilities: ClientCapabilities.LATEST });
 
 		const document = TextDocument.create(uri, 'json', 0, value);
-		const jsonDoc = ls.parseJSONDocument(document);
+		const jsonDoc = ls.parseJSON5Document(document);
 		return ls.findDocumentSymbols2(document, jsonDoc, context);
 	}
 
-	function assertColors(value: string, schema: JsonSchema.JSONSchema, expectedOffsets: number[], expectedColors: Color[]): Thenable<any> {
+	function assertColors(value: string, schema: JsonSchema.JSON5Schema, expectedOffsets: number[], expectedColors: Color[]): Thenable<any> {
 		const uri = 'test://test.json';
 		const schemaUri = "http://myschemastore/test1";
 
@@ -45,7 +45,7 @@ suite('JSON Document Symbols', () => {
 		ls.configure({ schemas: [{ fileMatch: ["*.json"], uri: schemaUri, schema }] });
 
 		const document = TextDocument.create(uri, 'json', 0, value);
-		const jsonDoc = ls.parseJSONDocument(document);
+		const jsonDoc = ls.parseJSON5Document(document);
 		return ls.findDocumentColors(document, jsonDoc).then(colorInfos => {
 			const actualOffsets = colorInfos.map(r => document.offsetAt(r.range.start));
 			assert.deepEqual(actualOffsets, expectedOffsets);
@@ -59,7 +59,7 @@ suite('JSON Document Symbols', () => {
 
 		const document = TextDocument.create('test://test/test.css', 'css', 0, '');
 
-		const doc = ls.parseJSONDocument(document);
+		const doc = ls.parseJSON5Document(document);
 		const range = Range.create(Position.create(0, 0), Position.create(0, 1));
 		const result = ls.getColorPresentations(document, doc, color, range);
 		assert.deepEqual(result.map(r => r.label), expected);
@@ -269,7 +269,7 @@ suite('JSON Document Symbols', () => {
 
 	test('Colors', async function () {
 		const content = '{ "a": "#FF00FF", "b": "#FF0000" }';
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			description: 'a very special object',
 			properties: {

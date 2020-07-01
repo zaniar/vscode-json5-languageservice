@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as Json from 'jsonc-parser';
-import { JSONSchema, JSONSchemaRef } from '../jsonSchema';
+import * as JSON5 from 'json5';
+import * as Json5 from 'json5-parser';
+import { JSON5Schema, JSON5SchemaRef } from '../json5Schema';
 import { isNumber, equals, isBoolean, isString, isDefined } from '../utils/objects';
-import { TextDocument, ASTNode, ObjectASTNode, ArrayASTNode, BooleanASTNode, NumberASTNode, StringASTNode, NullASTNode, PropertyASTNode, JSON5Path, ErrorCode, Diagnostic, DiagnosticSeverity, Range } from '../jsonLanguageTypes';
+import { TextDocument, ASTNode, ObjectASTNode, ArrayASTNode, BooleanASTNode, NumberASTNode, StringASTNode, NullASTNode, PropertyASTNode, JSON5Path, ErrorCode, Diagnostic, DiagnosticSeverity, Range } from '../json5LanguageTypes';
 
 import * as nls from 'vscode-nls';
 
@@ -145,9 +146,9 @@ export class ObjectASTNodeImpl extends ASTNodeImpl implements ObjectASTNode {
 	}
 
 }
-export function asSchema(schema: JSONSchemaRef): JSONSchema;
-export function asSchema(schema: JSONSchemaRef | undefined): JSONSchema | undefined;
-export function asSchema(schema: JSONSchemaRef | undefined): JSONSchema | undefined {
+export function asSchema(schema: JSON5SchemaRef): JSON5Schema;
+export function asSchema(schema: JSON5SchemaRef | undefined): JSON5Schema | undefined;
+export function asSchema(schema: JSON5SchemaRef | undefined): JSON5Schema | undefined {
 	if (isBoolean(schema)) {
 		return schema ? {} : { "not": {} };
 	}
@@ -161,7 +162,7 @@ export interface JSONDocumentConfig {
 export interface IApplicableSchema {
 	node: ASTNode;
 	inverted?: boolean;
-	schema: JSONSchema;
+	schema: JSON5Schema;
 }
 
 export enum EnumMatch {
@@ -279,29 +280,29 @@ export class ValidationResult {
 }
 
 export function newJSON5Document(root: ASTNode, diagnostics: Diagnostic[] = []) {
-	return new JSONDocument(root, diagnostics, []);
+	return new JSON5Document(root, diagnostics, []);
 }
 
 export function getNodeValue(node: ASTNode): any {
-	return Json.getNodeValue(node);
+	return Json5.getNodeValue(node);
 }
 
 export function getNodePath(node: ASTNode): JSON5Path {
-	return Json.getNodePath(node);
+	return Json5.getNodePath(node);
 }
 
 export function contains(node: ASTNode, offset: number, includeRightBound = false): boolean {
 	return offset >= node.offset && offset < (node.offset + node.length) || includeRightBound && offset === (node.offset + node.length);
 }
 
-export class JSONDocument {
+export class JSON5Document {
 
 	constructor(public readonly root: ASTNode | undefined, public readonly syntaxErrors: Diagnostic[] = [], public readonly comments: Range[] = []) {
 	}
 
 	public getNodeFromOffset(offset: number, includeRightBound = false): ASTNode | undefined {
 		if (this.root) {
-			return <ASTNode>Json.findNodeAtOffset(this.root, offset, includeRightBound);
+			return <ASTNode>Json5.findNodeAtOffset(this.root, offset, includeRightBound);
 		}
 		return undefined;
 	}
@@ -322,7 +323,7 @@ export class JSONDocument {
 		}
 	}
 
-	public validate(textDocument: TextDocument, schema: JSONSchema | undefined): Diagnostic[] | undefined {
+	public validate(textDocument: TextDocument, schema: JSON5Schema | undefined): Diagnostic[] | undefined {
 		if (this.root && schema) {
 			const validationResult = new ValidationResult();
 			validate(this.root, schema, validationResult, NoOpSchemaCollector.instance);
@@ -334,7 +335,7 @@ export class JSONDocument {
 		return undefined;
 	}
 
-	public getMatchingSchemas(schema: JSONSchema, focusOffset: number = -1, exclude?: ASTNode): IApplicableSchema[] {
+	public getMatchingSchemas(schema: JSON5Schema, focusOffset: number = -1, exclude?: ASTNode): IApplicableSchema[] {
 		const matchingSchemas = new SchemaCollector(focusOffset, exclude);
 		if (this.root && schema) {
 			validate(this.root, schema, new ValidationResult(), matchingSchemas);
@@ -343,7 +344,7 @@ export class JSONDocument {
 	}
 }
 
-function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
+function validate(n: ASTNode | undefined, schema: JSON5Schema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
 
 	if (!n || !matchingSchemas.include(n)) {
 		return;
@@ -416,11 +417,11 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 			}
 		}
 
-		const testAlternatives = (alternatives: JSONSchemaRef[], maxOneMatch: boolean) => {
+		const testAlternatives = (alternatives: JSON5SchemaRef[], maxOneMatch: boolean) => {
 			const matches = [];
 
 			// remember the best match that is used for error messages
-			let bestMatch: { schema: JSONSchema; validationResult: ValidationResult; matchingSchemas: ISchemaCollector; } | undefined = undefined;
+			let bestMatch: { schema: JSON5Schema; validationResult: ValidationResult; matchingSchemas: ISchemaCollector; } | undefined = undefined;
 			for (const subSchemaRef of alternatives) {
 				const subSchema = asSchema(subSchemaRef);
 				const subValidationResult = new ValidationResult();
@@ -473,7 +474,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 			testAlternatives(schema.oneOf, true);
 		}
 
-		const testBranch = (schema: JSONSchemaRef) => {
+		const testBranch = (schema: JSON5SchemaRef) => {
 			const subValidationResult = new ValidationResult();
 			const subMatchingSchemas = matchingSchemas.newSub();
 
@@ -485,7 +486,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 			matchingSchemas.merge(subMatchingSchemas);
 		};
 
-		const testCondition = (ifSchema: JSONSchemaRef, thenSchema?: JSONSchemaRef, elseSchema?: JSONSchemaRef) => {
+		const testCondition = (ifSchema: JSON5SchemaRef, thenSchema?: JSON5SchemaRef, elseSchema?: JSON5SchemaRef) => {
 			const subSchema = asSchema(ifSchema);
 			const subValidationResult = new ValidationResult();
 			const subMatchingSchemas = matchingSchemas.newSub();
@@ -555,7 +556,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 
 
 
-	function _validateNumberNode(node: NumberASTNode, schema: JSONSchema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
+	function _validateNumberNode(node: NumberASTNode, schema: JSON5Schema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
 		const val = node.value;
 
 		if (isNumber(schema.multipleOf)) {
@@ -616,7 +617,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 		}
 	}
 
-	function _validateStringNode(node: StringASTNode, schema: JSONSchema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
+	function _validateStringNode(node: StringASTNode, schema: JSON5Schema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
 		if (isNumber(schema.minLength) && node.value.length < schema.minLength) {
 			validationResult.problems.push({
 				location: { offset: node.offset, length: node.length },
@@ -686,7 +687,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 		}
 
 	}
-	function _validateArrayNode(node: ArrayASTNode, schema: JSONSchema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
+	function _validateArrayNode(node: ArrayASTNode, schema: JSON5Schema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
 		if (Array.isArray(schema.items)) {
 			const subSchemas = schema.items;
 			for (let index = 0; index < subSchemas.length; index++) {
@@ -776,7 +777,7 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 
 	}
 
-	function _validateObjectNode(node: ObjectASTNode, schema: JSONSchema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
+	function _validateObjectNode(node: ObjectASTNode, schema: JSON5Schema, validationResult: ValidationResult, matchingSchemas: ISchemaCollector): void {
 		const seenKeys: { [key: string]: ASTNode | undefined } = Object.create(null);
 		const unprocessedProperties: string[] = [];
 		for (const propertyNode of node.properties) {
@@ -956,28 +957,28 @@ function validate(n: ASTNode | undefined, schema: JSONSchema, validationResult: 
 }
 
 
-export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): JSONDocument {
+export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): JSON5Document {
 
 	const problems: Diagnostic[] = [];
 	let lastProblemOffset = -1;
 	const text = textDocument.getText();
-	const scanner = Json.createScanner(text, false);
+	const scanner = Json5.createScanner(text, false);
 
 	const commentRanges: Range[] | undefined = config && config.collectComments ? [] : undefined;
 
-	function _scanNext(): Json.SyntaxKind {
+	function _scanNext(): Json5.SyntaxKind {
 		while (true) {
 			const token = scanner.scan();
 			_checkScanError();
 			switch (token) {
-				case Json.SyntaxKind.LineCommentTrivia:
-				case Json.SyntaxKind.BlockCommentTrivia:
+				case Json5.SyntaxKind.LineCommentTrivia:
+				case Json5.SyntaxKind.BlockCommentTrivia:
 					if (Array.isArray(commentRanges)) {
 						commentRanges.push(Range.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
 					}
 					break;
-				case Json.SyntaxKind.Trivia:
-				case Json.SyntaxKind.LineBreakTrivia:
+				case Json5.SyntaxKind.Trivia:
+				case Json5.SyntaxKind.LineBreakTrivia:
 					break;
 				default:
 					return token;
@@ -985,7 +986,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 		}
 	}
 
-	function _accept(token: Json.SyntaxKind): boolean {
+	function _accept(token: Json5.SyntaxKind): boolean {
 		if (scanner.getToken() === token) {
 			_scanNext();
 			return true;
@@ -1002,7 +1003,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 		}
 	}
 
-	function _error<T extends ASTNodeImpl>(message: string, code: ErrorCode, node: T | undefined = undefined, skipUntilAfter: Json.SyntaxKind[] = [], skipUntil: Json.SyntaxKind[] = []): T | undefined {
+	function _error<T extends ASTNodeImpl>(message: string, code: ErrorCode, node: T | undefined = undefined, skipUntilAfter: Json5.SyntaxKind[] = [], skipUntil: Json5.SyntaxKind[] = []): T | undefined {
 		let start = scanner.getTokenOffset();
 		let end = scanner.getTokenOffset() + scanner.getTokenLength();
 		if (start === end && start > 0) {
@@ -1019,7 +1020,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 		}
 		if (skipUntilAfter.length + skipUntil.length > 0) {
 			let token = scanner.getToken();
-			while (token !== Json.SyntaxKind.EOF) {
+			while (token !== Json5.SyntaxKind.EOF) {
 				if (skipUntilAfter.indexOf(token) !== -1) {
 					_scanNext();
 					break;
@@ -1034,22 +1035,22 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 
 	function _checkScanError(): boolean {
 		switch (scanner.getTokenError()) {
-			case Json.ScanError.InvalidUnicode:
+			case Json5.ScanError.InvalidUnicode:
 				_error(localize('InvalidUnicode', 'Invalid unicode sequence in string.'), ErrorCode.InvalidUnicode);
 				return true;
-			case Json.ScanError.InvalidEscapeCharacter:
+			case Json5.ScanError.InvalidEscapeCharacter:
 				_error(localize('InvalidEscapeCharacter', 'Invalid escape character in string.'), ErrorCode.InvalidEscapeCharacter);
 				return true;
-			case Json.ScanError.UnexpectedEndOfNumber:
+			case Json5.ScanError.UnexpectedEndOfNumber:
 				_error(localize('UnexpectedEndOfNumber', 'Unexpected end of number.'), ErrorCode.UnexpectedEndOfNumber);
 				return true;
-			case Json.ScanError.UnexpectedEndOfComment:
+			case Json5.ScanError.UnexpectedEndOfComment:
 				_error(localize('UnexpectedEndOfComment', 'Unexpected end of comment.'), ErrorCode.UnexpectedEndOfComment);
 				return true;
-			case Json.ScanError.UnexpectedEndOfString:
+			case Json5.ScanError.UnexpectedEndOfString:
 				_error(localize('UnexpectedEndOfString', 'Unexpected end of string.'), ErrorCode.UnexpectedEndOfString);
 				return true;
-			case Json.ScanError.InvalidCharacter:
+			case Json5.ScanError.InvalidCharacter:
 				_error(localize('InvalidCharacter', 'Invalid characters in string. Control characters must be escaped.'), ErrorCode.InvalidCharacter);
 				return true;
 		}
@@ -1067,7 +1068,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 	}
 
 	function _parseArray(parent: ASTNode | undefined): ArrayASTNode | undefined {
-		if (scanner.getToken() !== Json.SyntaxKind.OpenBracketToken) {
+		if (scanner.getToken() !== Json5.SyntaxKind.OpenBracketToken) {
 			return undefined;
 		}
 		const node = new ArrayASTNodeImpl(parent, scanner.getTokenOffset());
@@ -1075,14 +1076,14 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 
 		const count = 0;
 		let needsComma = false;
-		while (scanner.getToken() !== Json.SyntaxKind.CloseBracketToken && scanner.getToken() !== Json.SyntaxKind.EOF) {
-			if (scanner.getToken() === Json.SyntaxKind.CommaToken) {
+		while (scanner.getToken() !== Json5.SyntaxKind.CloseBracketToken && scanner.getToken() !== Json5.SyntaxKind.EOF) {
+			if (scanner.getToken() === Json5.SyntaxKind.CommaToken) {
 				if (!needsComma) {
 					_error(localize('ValueExpected', 'Value expected'), ErrorCode.ValueExpected);
 				}
 				const commaOffset = scanner.getTokenOffset();
 				_scanNext(); // consume comma
-				if (scanner.getToken() === Json.SyntaxKind.CloseBracketToken) {
+				if (scanner.getToken() === Json5.SyntaxKind.CloseBracketToken) {
 					if (needsComma) {
 						_errorAtRange(localize('TrailingComma', 'Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
 					}
@@ -1093,14 +1094,14 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 			}
 			const item = _parseValue(node);
 			if (!item) {
-				_error(localize('PropertyExpected', 'Value expected'), ErrorCode.ValueExpected, undefined, [], [Json.SyntaxKind.CloseBracketToken, Json.SyntaxKind.CommaToken]);
+				_error(localize('PropertyExpected', 'Value expected'), ErrorCode.ValueExpected, undefined, [], [Json5.SyntaxKind.CloseBracketToken, Json5.SyntaxKind.CommaToken]);
 			} else {
 				node.items.push(item);
 			}
 			needsComma = true;
 		}
 
-		if (scanner.getToken() !== Json.SyntaxKind.CloseBracketToken) {
+		if (scanner.getToken() !== Json5.SyntaxKind.CloseBracketToken) {
 			return _error(localize('ExpectedCloseBracket', 'Expected comma or closing bracket'), ErrorCode.CommaOrCloseBacketExpected, node);
 		}
 
@@ -1113,7 +1114,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 		const node = new PropertyASTNodeImpl(parent, scanner.getTokenOffset(), keyPlaceholder);
 		let key = _parseString(node);
 		if (!key) {
-			if (scanner.getToken() === Json.SyntaxKind.Unknown) {
+			if (scanner.getToken() === Json5.SyntaxKind.Unknown) {
 				// give a more helpful error message
 				_error(localize('DoubleQuotesExpected', 'Property keys must be doublequoted'), ErrorCode.Undefined);
 				const keyNode = new StringASTNodeImpl(node, scanner.getTokenOffset(), scanner.getTokenLength());
@@ -1137,19 +1138,19 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 			keysSeen[key.value] = node;
 		}
 
-		if (scanner.getToken() === Json.SyntaxKind.ColonToken) {
+		if (scanner.getToken() === Json5.SyntaxKind.ColonToken) {
 			node.colonOffset = scanner.getTokenOffset();
 			_scanNext(); // consume ColonToken
 		} else {
 			_error(localize('ColonExpected', 'Colon expected'), ErrorCode.ColonExpected);
-			if (scanner.getToken() === Json.SyntaxKind.StringLiteral && textDocument.positionAt(key.offset + key.length).line < textDocument.positionAt(scanner.getTokenOffset()).line) {
+			if (scanner.getToken() === Json5.SyntaxKind.StringLiteral && textDocument.positionAt(key.offset + key.length).line < textDocument.positionAt(scanner.getTokenOffset()).line) {
 				node.length = key.length;
 				return node;
 			}
 		}
 		const value = _parseValue(node);
 		if (!value) {
-			return _error(localize('ValueExpected', 'Value expected'), ErrorCode.ValueExpected, node, [], [Json.SyntaxKind.CloseBraceToken, Json.SyntaxKind.CommaToken]);
+			return _error(localize('ValueExpected', 'Value expected'), ErrorCode.ValueExpected, node, [], [Json5.SyntaxKind.CloseBraceToken, Json5.SyntaxKind.CommaToken]);
 		}
 		node.valueNode = value;
 		node.length = value.offset + value.length - node.offset;
@@ -1157,7 +1158,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 	}
 
 	function _parseObject(parent: ASTNode | undefined): ObjectASTNode | undefined {
-		if (scanner.getToken() !== Json.SyntaxKind.OpenBraceToken) {
+		if (scanner.getToken() !== Json5.SyntaxKind.OpenBraceToken) {
 			return undefined;
 		}
 		const node = new ObjectASTNodeImpl(parent, scanner.getTokenOffset());
@@ -1165,14 +1166,14 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 		_scanNext(); // consume OpenBraceToken
 		let needsComma = false;
 
-		while (scanner.getToken() !== Json.SyntaxKind.CloseBraceToken && scanner.getToken() !== Json.SyntaxKind.EOF) {
-			if (scanner.getToken() === Json.SyntaxKind.CommaToken) {
+		while (scanner.getToken() !== Json5.SyntaxKind.CloseBraceToken && scanner.getToken() !== Json5.SyntaxKind.EOF) {
+			if (scanner.getToken() === Json5.SyntaxKind.CommaToken) {
 				if (!needsComma) {
 					_error(localize('PropertyExpected', 'Property expected'), ErrorCode.PropertyExpected);
 				}
 				const commaOffset = scanner.getTokenOffset();
 				_scanNext(); // consume comma
-				if (scanner.getToken() === Json.SyntaxKind.CloseBraceToken) {
+				if (scanner.getToken() === Json5.SyntaxKind.CloseBraceToken) {
 					if (needsComma) {
 						_errorAtRange(localize('TrailingComma', 'Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
 					}
@@ -1183,21 +1184,21 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 			}
 			const property = _parseProperty(node, keysSeen);
 			if (!property) {
-				_error(localize('PropertyExpected', 'Property expected'), ErrorCode.PropertyExpected, undefined, [], [Json.SyntaxKind.CloseBraceToken, Json.SyntaxKind.CommaToken]);
+				_error(localize('PropertyExpected', 'Property expected'), ErrorCode.PropertyExpected, undefined, [], [Json5.SyntaxKind.CloseBraceToken, Json5.SyntaxKind.CommaToken]);
 			} else {
 				node.properties.push(property);
 			}
 			needsComma = true;
 		}
 
-		if (scanner.getToken() !== Json.SyntaxKind.CloseBraceToken) {
+		if (scanner.getToken() !== Json5.SyntaxKind.CloseBraceToken) {
 			return _error(localize('ExpectedCloseBrace', 'Expected comma or closing brace'), ErrorCode.CommaOrCloseBraceExpected, node);
 		}
 		return _finalize(node, true);
 	}
 
 	function _parseString(parent: ASTNode | undefined): StringASTNode | undefined {
-		if (scanner.getToken() !== Json.SyntaxKind.StringLiteral) {
+		if (scanner.getToken() !== Json5.SyntaxKind.StringLiteral) {
 			return undefined;
 		}
 
@@ -1208,15 +1209,15 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 	}
 
 	function _parseNumber(parent: ASTNode | undefined): NumberASTNode | undefined {
-		if (scanner.getToken() !== Json.SyntaxKind.NumericLiteral) {
+		if (scanner.getToken() !== Json5.SyntaxKind.NumericLiteral) {
 			return undefined;
 		}
 
 		const node = new NumberASTNodeImpl(parent, scanner.getTokenOffset());
-		if (scanner.getTokenError() === Json.ScanError.None) {
+		if (scanner.getTokenError() === Json5.ScanError.None) {
 			const tokenValue = scanner.getTokenValue();
 			try {
-				const numberValue = JSON.parse(tokenValue);
+				const numberValue = JSON5.parse(tokenValue);
 				if (!isNumber(numberValue)) {
 					return _error(localize('InvalidNumberFormat', 'Invalid number format.'), ErrorCode.Undefined, node);
 				}
@@ -1232,11 +1233,11 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 	function _parseLiteral(parent: ASTNode | undefined): ASTNode | undefined {
 		let node: ASTNodeImpl;
 		switch (scanner.getToken()) {
-			case Json.SyntaxKind.NullKeyword:
+			case Json5.SyntaxKind.NullKeyword:
 				return _finalize(new NullASTNodeImpl(parent, scanner.getTokenOffset()), true);
-			case Json.SyntaxKind.TrueKeyword:
+			case Json5.SyntaxKind.TrueKeyword:
 				return _finalize(new BooleanASTNodeImpl(parent, true, scanner.getTokenOffset()), true);
-			case Json.SyntaxKind.FalseKeyword:
+			case Json5.SyntaxKind.FalseKeyword:
 				return _finalize(new BooleanASTNodeImpl(parent, false, scanner.getTokenOffset()), true);
 			default:
 				return undefined;
@@ -1249,13 +1250,13 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 
 	let _root: ASTNode | undefined = undefined;
 	const token = _scanNext();
-	if (token !== Json.SyntaxKind.EOF) {
+	if (token !== Json5.SyntaxKind.EOF) {
 		_root = _parseValue(_root);
 		if (!_root) {
 			_error(localize('Invalid symbol', 'Expected a JSON object, array or literal.'), ErrorCode.Undefined);
-		} else if (scanner.getToken() !== Json.SyntaxKind.EOF) {
+		} else if (scanner.getToken() !== Json5.SyntaxKind.EOF) {
 			_error(localize('End of file expected', 'End of file expected.'), ErrorCode.Undefined);
 		}
 	}
-	return new JSONDocument(_root, problems, commentRanges);
+	return new JSON5Document(_root, problems, commentRanges);
 }

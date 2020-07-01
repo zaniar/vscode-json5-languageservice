@@ -3,16 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { JSONCompletion } from './services/jsonCompletion';
-import { JSONHover } from './services/jsonHover';
-import { JSONValidation } from './services/jsonValidation';
+import { JSONCompletion } from './services/json5Completion';
+import { JSONHover } from './services/json5Hover';
+import { JSONValidation } from './services/json5Validation';
 
-import { JSONDocumentSymbols } from './services/jsonDocumentSymbols';
-import { parse as parseJSON, JSONDocument as InternalJSONDocument, newJSON5Document } from './parser/jsonParser';
+import { JSON5DocumentSymbols } from './services/json5DocumentSymbols';
+import { parse as parseJSON, JSON5Document as InternalJSONDocument, newJSON5Document } from './parser/json5Parser';
 import { schemaContributions } from './services/configuration';
-import { JSONSchemaService } from './services/jsonSchemaService';
-import { getFoldingRanges } from './services/jsonFolding';
-import { getSelectionRanges } from './services/jsonSelectionRanges';
+import { JSON5SchemaService } from './services/json5SchemaService';
+import { getFoldingRanges } from './services/json5Folding';
+import { getSelectionRanges } from './services/json5SelectionRanges';
 
 import { format as formatJSON, Range as JSONCRange } from 'jsonc-parser';
 import {
@@ -24,11 +24,11 @@ import {
 	TextDocument,
 	Position, CompletionItem, CompletionList, Hover, Range, SymbolInformation, Diagnostic,
 	TextEdit, FormattingOptions, DocumentSymbol, DefinitionLink
-} from './jsonLanguageTypes';
-import { findDefinition } from './services/jsonDefinition';
+} from './json5LanguageTypes';
+import { findDefinition } from './services/json5Definition';
 
 export type JSONDocument = {};
-export * from './jsonLanguageTypes';
+export * from './json5LanguageTypes';
 
 export interface LanguageService {
 	configure(settings: LanguageSettings): void;
@@ -55,12 +55,12 @@ export interface LanguageService {
 export function getLanguageService(params: LanguageServiceParams): LanguageService {
 	const promise = params.promiseConstructor || Promise;
 
-	const jsonSchemaService = new JSONSchemaService(params.schemaRequestService, params.workspaceContext, promise);
+	const jsonSchemaService = new JSON5SchemaService(params.schemaRequestService, params.workspaceContext, promise);
 	jsonSchemaService.setSchemaContributions(schemaContributions);
 
 	const jsonCompletion = new JSONCompletion(jsonSchemaService, params.contributions, promise, params.clientCapabilities);
 	const jsonHover = new JSONHover(jsonSchemaService, params.contributions, promise);
-	const jsonDocumentSymbols = new JSONDocumentSymbols(jsonSchemaService);
+	const jsonDocumentSymbols = new JSON5DocumentSymbols(jsonSchemaService);
 	const jsonValidation = new JSONValidation(jsonSchemaService, promise);
 
 	return {

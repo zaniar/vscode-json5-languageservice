@@ -4,19 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import * as Parser from '../parser/jsonParser';
-import * as SchemaService from '../services/jsonSchemaService';
-import * as JsonSchema from '../jsonSchema';
-import { JSONHover } from '../services/jsonHover';
+import * as Parser from '../parser/json5Parser';
+import * as SchemaService from '../services/json5SchemaService';
+import * as JsonSchema from '../json5Schema';
+import { JSONHover } from '../services/json5Hover';
 
-import { Hover, Position, MarkedString, TextDocument } from '../jsonLanguageService';
+import { Hover, Position, MarkedString, TextDocument } from '../json5LanguageService';
 
 suite('JSON Hover', () => {
 
-	function testComputeInfo(value: string, schema: JsonSchema.JSONSchema, position: Position): PromiseLike<Hover> {
+	function testComputeInfo(value: string, schema: JsonSchema.JSON5Schema, position: Position): PromiseLike<Hover> {
 		const uri = 'test://test.json';
 
-		const schemaService = new SchemaService.JSONSchemaService(requestService);
+		const schemaService = new SchemaService.JSON5SchemaService(requestService);
 		const hoverProvider = new JSONHover(schemaService, [], Promise);
 		const id = "http://myschemastore/test1";
 		schemaService.registerExternalSchema(id, ["*.json"], schema);
@@ -33,7 +33,7 @@ suite('JSON Hover', () => {
 	test('Simple schema', async function () {
 
 		const content = '{"a": 42, "b": "hello", "c": false}';
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			description: 'a very special object',
 			properties: {
@@ -68,7 +68,7 @@ suite('JSON Hover', () => {
 	test('Nested schema', async function () {
 
 		const content = '{"a": 42, "b": "hello"}';
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			oneOf: [{
 				type: 'object',
 				description: 'a very special object',
@@ -99,7 +99,7 @@ suite('JSON Hover', () => {
 	});
 
 	test('Enum description', async function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -140,7 +140,7 @@ suite('JSON Hover', () => {
 	});
 
 	test('Multiline descriptions', async function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {

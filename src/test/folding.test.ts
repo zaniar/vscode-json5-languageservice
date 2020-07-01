@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { TextDocument, getLanguageService } from '../jsonLanguageService';
+import { TextDocument, getLanguageService } from '../json5LanguageService';
 
 interface ExpectedIndentRange {
 	startLine: number;

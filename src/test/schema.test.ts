@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import * as SchemaService from '../services/jsonSchemaService';
-import * as Parser from '../parser/jsonParser';
+import * as SchemaService from '../services/json5SchemaService';
+import * as Parser from '../parser/json5Parser';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as path from 'path';
-import { getLanguageService, JSONSchema, SchemaRequestService, TextDocument } from '../jsonLanguageService';
+import { getLanguageService, JSONSchema, SchemaRequestService, TextDocument } from '../json5LanguageService';
 
-function toDocument(text: string, config?: Parser.JSONDocumentConfig): { textDoc: TextDocument, jsonDoc: Parser.JSONDocument } {
+function toDocument(text: string, config?: Parser.JSONDocumentConfig): { textDoc: TextDocument, jsonDoc: Parser.JSON5Document } {
 	const textDoc = TextDocument.create('foo://bar/file.json', 'json', 0, text);
 	const jsonDoc = Parser.parse(textDoc, config);
 	return { textDoc, jsonDoc };
@@ -64,7 +64,7 @@ suite('JSON Schema', () => {
 	};
 
 	test('Resolving $refs', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		service.setSchemaContributions({
 			schemas: {
 				"https://myschemastore/main": {
@@ -95,7 +95,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Resolving $refs 2', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		service.setSchemaContributions({
 			schemas: {
 				"http://json.schemastore.org/swagger-2.0": {
@@ -132,7 +132,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Resolving $refs 3', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		service.setSchemaContributions({
 			schemas: {
 				"https://myschemastore/main/schema1.json": {
@@ -180,7 +180,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Resolving $refs 3', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		service.setSchemaContributions({
 			schemas: {
 				"https://myschemastore/main/schema1.json": {
@@ -228,7 +228,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('FileSchema', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		service.setSchemaContributions({
 			schemas: {
@@ -257,7 +257,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Array FileSchema', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		service.setSchemaContributions({
 			schemas: {
@@ -289,7 +289,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Missing subschema', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		service.setSchemaContributions({
 			schemas: {
@@ -312,7 +312,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Preloaded Schema', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
 		const schema: JSONSchema = {
 			type: 'object',
@@ -338,7 +338,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Multiple matches', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id1 = 'https://myschemastore/test1';
 		const schema1: JSONSchema = {
 			type: 'object',
@@ -370,7 +370,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('External Schema', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
 		const schema: JSONSchema = {
 			type: 'object',
@@ -397,7 +397,7 @@ suite('JSON Schema', () => {
 
 
 	test('Resolving in-line $refs', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
 
 		const schema: JSONSchema = {
@@ -433,7 +433,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Resolving in-line $refs automatically for external schemas', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
 		const schema: JSONSchema = {
 			id: 'test://schemas/main',
@@ -468,7 +468,7 @@ suite('JSON Schema', () => {
 
 
 	test('Clearing External Schemas', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id1 = 'http://myschemastore/test1';
 		const schema1: JSONSchema = {
 			type: 'object',
@@ -507,7 +507,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Schema contributions', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		service.setSchemaContributions({
 			schemas: {
@@ -560,7 +560,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('Exclusive file patterns', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		service.setSchemaContributions({
 			schemas: {
@@ -589,7 +589,7 @@ suite('JSON Schema', () => {
 
 	test('Resolving circular $refs', async function () {
 
-		const service: SchemaService.IJSONSchemaService = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service: SchemaService.IJSON5SchemaService = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		const input = {
 			"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -628,7 +628,7 @@ suite('JSON Schema', () => {
 
 	test('Resolving circular $refs, invalid document', async function () {
 
-		const service: SchemaService.IJSONSchemaService = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service: SchemaService.IJSON5SchemaService = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		const input = {
 			"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -657,7 +657,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('$refs in $ref', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id0 = "foo://bar/bar0";
 		const id1 = "foo://bar/bar1";
 		const schema0: JSONSchema = {
@@ -685,7 +685,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('$refs in $ref - circular', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		service.setSchemaContributions({
 			schemas: {
 				"https://myschemastore/main": {
@@ -727,7 +727,7 @@ suite('JSON Schema', () => {
 	});
 
 	test('$refs with encoded characters', async function () {
-		const service = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id0 = "foo://bar/bar0";
 		const schema: JSONSchema = {
 			definitions: {
@@ -752,7 +752,7 @@ suite('JSON Schema', () => {
 
 
 	test('Validate Azure Resource Definition', async function () {
-		const service: SchemaService.IJSONSchemaService = new SchemaService.JSONSchemaService(newMockRequestService(), workspaceContext);
+		const service: SchemaService.IJSON5SchemaService = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 
 		const input = {
 			"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",

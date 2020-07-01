@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getLanguageService, ClientCapabilities, Range, TextDocument } from '../jsonLanguageService';
+import { getLanguageService, ClientCapabilities, Range, TextDocument } from '../json5LanguageService';
 import * as assert from 'assert';
 
 const applyEdits = TextDocument.applyEdits;

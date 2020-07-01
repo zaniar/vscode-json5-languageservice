@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 
-import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../jsonLanguageService';
+import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
 import { repeat } from '../utils/strings';
 
 const applyEdits = TextDocument.applyEdits;
@@ -66,7 +66,7 @@ suite('JSON Completion', () => {
 
 		const document = TextDocument.create('test://test/test.json', 'json', 0, value);
 		const position = Position.create(0, offset);
-		const jsonDoc = ls.parseJSONDocument(document);
+		const jsonDoc = ls.parseJSON5Document(document);
 		return ls.doComplete(document, position, jsonDoc).then(list => {
 			if (expected.count) {
 				assert.equal(list!.items.length, expected.count, value + ' ' + list!.items.map(i => i.label).join(', '));

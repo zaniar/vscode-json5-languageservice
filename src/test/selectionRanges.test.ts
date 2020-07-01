@@ -5,7 +5,7 @@
 
 import 'mocha';
 import * as assert from 'assert';
-import { getLanguageService, TextDocument } from '../jsonLanguageService';
+import { getLanguageService, TextDocument } from '../json5LanguageService';
 import { SelectionRange } from 'vscode-languageserver-types';
 
 function assertRanges(content: string, expected: (number | string)[][]): void {
@@ -17,7 +17,7 @@ function assertRanges(content: string, expected: (number | string)[][]): void {
 	const ls = getLanguageService({});
 
 	const document = TextDocument.create('test://foo.json', 'json', 1, content);
-	const jsonDoc = ls.parseJSONDocument(document);
+	const jsonDoc = ls.parseJSON5Document(document);
 
 	const actualRanges = ls.getSelectionRanges(document, [document.positionAt(offset)], jsonDoc);
 	const offsetPairs: [number, string][] = [];

@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 
-import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../jsonLanguageService';
+import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
 import { repeat } from '../utils/strings';
 import { DefinitionLink } from 'vscode-languageserver-types';
 
@@ -17,7 +17,7 @@ suite('JSON Find Definitions', () => {
 		const ls = getLanguageService({ clientCapabilities: ClientCapabilities.LATEST });
 		const document = TextDocument.create('test://test/test.json', 'json', 0, value);
 		const position = Position.create(0, offset);
-		const jsonDoc = ls.parseJSONDocument(document);
+		const jsonDoc = ls.parseJSON5Document(document);
 		return ls.findDefinition(document, position, jsonDoc).then(list => {
 			if (expected) {
 				assert.notDeepEqual(list, []);

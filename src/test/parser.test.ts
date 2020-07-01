@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from 'assert';
-import { getNodePath, getNodeValue, JSONDocument } from '../parser/jsonParser';
-import * as JsonSchema from '../jsonSchema';
-import { TextDocument, Range, ErrorCode, ASTNode, ObjectASTNode, getLanguageService } from '../jsonLanguageService';
+import { getNodePath, getNodeValue, JSON5Document } from '../parser/json5Parser';
+import * as JsonSchema from '../json5Schema';
+import { TextDocument, Range, ErrorCode, ASTNode, ObjectASTNode, getLanguageService } from '../json5LanguageService';
 
 suite('JSON Parser', () => {
 
@@ -26,11 +26,11 @@ suite('JSON Parser', () => {
 		assert.notEqual(jsonDoc.syntaxErrors[0].message, 'Invalid JSON', json);
 	}
 
-	function toDocument(text: string): { textDoc: TextDocument, jsonDoc: JSONDocument } {
+	function toDocument(text: string): { textDoc: TextDocument, jsonDoc: JSON5Document } {
 		const textDoc = TextDocument.create('foo://bar/file.json', 'json', 0, text);
 
 		const ls = getLanguageService({});
-		const jsonDoc = ls.parseJSONDocument(textDoc) as JSONDocument;
+		const jsonDoc = ls.parseJSON5Document(textDoc) as JSON5Document;
 		return { textDoc, jsonDoc };
 	}
 
@@ -39,7 +39,7 @@ suite('JSON Parser', () => {
 		return Range.create(textDoc.positionAt(offset), textDoc.positionAt(offset + length));
 	}
 
-	function validate(text: string, schema: JsonSchema.JSONSchema) {
+	function validate(text: string, schema: JsonSchema.JSON5Schema) {
 		const { textDoc, jsonDoc } = toDocument(text);
 		return jsonDoc.validate(textDoc, schema);
 	}
@@ -849,7 +849,7 @@ suite('JSON Parser', () => {
 	test('allOf', function () {
 
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			allOf: [
 				{
@@ -891,7 +891,7 @@ suite('JSON Parser', () => {
 	test('anyOf', function () {
 
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			anyOf: [
 				{
@@ -939,7 +939,7 @@ suite('JSON Parser', () => {
 
 
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			oneOf: [
 				{
@@ -983,7 +983,7 @@ suite('JSON Parser', () => {
 
 
 	test('not', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			not: {
 				properties: {
@@ -1008,7 +1008,7 @@ suite('JSON Parser', () => {
 
 
 	test('if/then/else', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			if: {
 				properties: {
@@ -1059,7 +1059,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('nested if/then/else', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			if: {
 				properties: {
@@ -1141,7 +1141,7 @@ suite('JSON Parser', () => {
 
 		const { textDoc, jsonDoc } = toDocument('{"prop1": 42, "prop2": true}');
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			minProperties: 2
 		};
 
@@ -1163,7 +1163,7 @@ suite('JSON Parser', () => {
 
 		const { textDoc, jsonDoc } = toDocument('{"prop1": 42, "prop2": true}');
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			maxProperties: 2
 		};
 
@@ -1182,7 +1182,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('patternProperties', function () {
-		let schema: JsonSchema.JSONSchema = {
+		let schema: JsonSchema.JSON5Schema = {
 			id: 'test://schemas/main',
 			patternProperties: {
 				'^prop\\d$': {
@@ -1226,7 +1226,7 @@ suite('JSON Parser', () => {
 
 	test('additionalProperties', function () {
 
-		let schema: JsonSchema.JSONSchema = {
+		let schema: JsonSchema.JSON5Schema = {
 			additionalProperties: {
 				type: 'number'
 			}
@@ -1281,7 +1281,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('enum', function () {
-		let schema: JsonSchema.JSONSchema = {
+		let schema: JsonSchema.JSON5Schema = {
 			properties: {
 				'prop': {
 					enum: ['violin', 'harmonica', 'banjo']
@@ -1335,7 +1335,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('const', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			properties: {
 				'prop': {
 					const: 'violin'
@@ -1368,7 +1368,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('oneOf const', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			properties: {
 				'prop': {
 					oneOf: [
@@ -1402,7 +1402,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('propertyNames', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			propertyNames: {
 				type: 'string',
 				minLength: 2,
@@ -1426,7 +1426,7 @@ suite('JSON Parser', () => {
 
 		const { textDoc, jsonDoc } = toDocument('[1, 2, 3]');
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'array',
 			uniqueItems: true
 		};
@@ -1450,7 +1450,7 @@ suite('JSON Parser', () => {
 
 	test('containsItem', function () {
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'array',
 			contains: { type: "number", const: 3 }
 		};
@@ -1467,7 +1467,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('items as array', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'array',
 			items: [
 				{
@@ -1502,7 +1502,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('additionalItems', function () {
-		let schema: JsonSchema.JSONSchema = {
+		let schema: JsonSchema.JSON5Schema = {
 			type: 'array',
 			items: [
 				{
@@ -1567,7 +1567,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('multipleOf', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'array',
 			items: {
 				type: 'integer',
@@ -1589,7 +1589,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('dependencies with array', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				a: {
@@ -1621,7 +1621,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('dependencies with schema', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				a: {
@@ -1661,7 +1661,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('type as array', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop': {
@@ -1691,7 +1691,7 @@ suite('JSON Parser', () => {
 
 		const { textDoc, jsonDoc } = toDocument('{"prop": 42}');
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop': {
@@ -1723,7 +1723,7 @@ suite('JSON Parser', () => {
 		const { jsonDoc } = toDocument('{"key":42}');
 		assert.strictEqual(jsonDoc.syntaxErrors.length, 0);
 
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'key': {
@@ -1784,7 +1784,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('validate alternatives', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'key': {
@@ -1834,7 +1834,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('validate alternatives 2', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'key': {
@@ -1884,7 +1884,7 @@ suite('JSON Parser', () => {
 	});
 
 	test('enum value merge', function () {
-		const schema: JsonSchema.JSONSchema = {
+		const schema: JsonSchema.JSON5Schema = {
 			type: 'object',
 			properties: {
 				'key': {
@@ -1920,7 +1920,7 @@ suite('JSON Parser', () => {
 		res = await ls.doValidation(textDoc, jsonDoc, { trailingCommas: 'ignore' });
 		assert.strictEqual(res.length, 0);
 
-		const schema: JsonSchema.JSONSchema = { type: 'object', required: ['foo'] };
+		const schema: JsonSchema.JSON5Schema = { type: 'object', required: ['foo'] };
 		res = await ls.doValidation(textDoc, jsonDoc, { trailingCommas: 'ignore' }, schema);
 		assert.strictEqual(res.length, 1);
 		assert.strictEqual(res[0].message, 'Missing property "foo".');
