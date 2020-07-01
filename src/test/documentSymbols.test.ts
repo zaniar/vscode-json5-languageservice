@@ -13,7 +13,7 @@ import {
 } from "../json5LanguageService";
 import { colorFrom256RGB } from '../utils/colors';
 
-suite('JSON Document Symbols', () => {
+suite('JSON5 Document Symbols', () => {
 
 	const schemaRequestService = function (uri: string): Promise<string> {
 		return Promise.reject<string>('Resource not found');

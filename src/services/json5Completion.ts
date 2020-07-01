@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as Parser from '../parser/json5Parser';
-import * as Json from 'jsonc-parser';
+import * as Json from 'json5-parser';
 import * as SchemaService from './json5SchemaService';
 import { JSON5Schema, JSON5SchemaRef } from '../json5Schema';
-import { JSONWorkerContribution, CompletionsCollector } from '../json5Contributions';
+import { JSON5WorkerContribution, CompletionsCollector } from '../json5Contributions';
 import { stringifyObject } from '../utils/json5';
 import { endsWith } from '../utils/strings';
 import { isDefined } from '../utils/objects';
@@ -24,14 +24,14 @@ const localize = nls.loadMessageBundle();
 const valueCommitCharacters = [',', '}', ']'];
 const propertyCommitCharacters = [':'];
 
-export class JSONCompletion {
+export class JSON5Completion {
 
 	private supportsMarkdown: boolean | undefined;
 	private supportsCommitCharacters: boolean | undefined;
 
 	constructor(
 		private schemaService: SchemaService.IJSON5SchemaService,
-		private contributions: JSONWorkerContribution[] = [],
+		private contributions: JSON5WorkerContribution[] = [],
 		private promiseConstructor: PromiseConstructor = Promise,
 		private clientCapabilities: ClientCapabilities = {}) {
 	}

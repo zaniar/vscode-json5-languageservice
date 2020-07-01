@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { createScanner, SyntaxKind, ScanError } from 'jsonc-parser';
+import { createScanner, SyntaxKind, ScanError } from 'json5-parser';
 import { TextDocument, FoldingRangeKind, FoldingRange, FoldingRangesContext, Position } from '../json5LanguageTypes';
 
 export function getFoldingRanges(document: TextDocument, context?: FoldingRangesContext): FoldingRange[] {

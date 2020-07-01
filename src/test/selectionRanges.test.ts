@@ -31,7 +31,7 @@ function assertRanges(content: string, expected: (number | string)[][]): void {
 	assert.deepEqual(offsetPairs, expected, message);
 }
 
-suite('JSON SelectionRange', () => {
+suite('JSON5 SelectionRange', () => {
 
 	test('Strings', () => {
 		assertRanges('"ab|cd"', [

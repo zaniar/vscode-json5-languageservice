@@ -9,15 +9,15 @@ import * as Parser from '../parser/json5Parser';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as path from 'path';
-import { getLanguageService, JSONSchema, SchemaRequestService, TextDocument } from '../json5LanguageService';
+import { getLanguageService, JSON5Schema, SchemaRequestService, TextDocument } from '../json5LanguageService';
 
-function toDocument(text: string, config?: Parser.JSONDocumentConfig): { textDoc: TextDocument, jsonDoc: Parser.JSON5Document } {
+function toDocument(text: string, config?: Parser.JSON5DocumentConfig): { textDoc: TextDocument, jsonDoc: Parser.JSON5Document } {
 	const textDoc = TextDocument.create('foo://bar/file.json', 'json', 0, text);
 	const jsonDoc = Parser.parse(textDoc, config);
 	return { textDoc, jsonDoc };
 }
 
-suite('JSON Schema', () => {
+suite('JSON5 Schema', () => {
 
 	const fixureDocuments: { [uri: string]: string } = {
 		'http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json': 'deploymentTemplate.json',
@@ -30,7 +30,7 @@ suite('JSON Schema', () => {
 		'http://schema.management.azure.com/schemas/2015-08-01/Microsoft.Compute.json': 'Microsoft.Compute.json'
 	};
 
-	function newMockRequestService(schemas: { [uri: string]: JSONSchema } = {}, accesses: string[] = []): SchemaRequestService {
+	function newMockRequestService(schemas: { [uri: string]: JSON5Schema } = {}, accesses: string[] = []): SchemaRequestService {
 
 		return (uri: string): Promise<string> => {
 			if (uri.length && uri[uri.length - 1] === '#') {
@@ -314,7 +314,7 @@ suite('JSON Schema', () => {
 	test('Preloaded Schema', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				child: {
@@ -340,7 +340,7 @@ suite('JSON Schema', () => {
 	test('Multiple matches', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id1 = 'https://myschemastore/test1';
-		const schema1: JSONSchema = {
+		const schema1: JSON5Schema = {
 			type: 'object',
 			properties: {
 				foo: {
@@ -350,7 +350,7 @@ suite('JSON Schema', () => {
 		};
 
 		const id2 = 'https://myschemastore/test2';
-		const schema2: JSONSchema = {
+		const schema2: JSON5Schema = {
 			type: 'object',
 			properties: {
 				bar: {
@@ -372,7 +372,7 @@ suite('JSON Schema', () => {
 	test('External Schema', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				child: {
@@ -400,7 +400,7 @@ suite('JSON Schema', () => {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			id: 'test://schemas/main',
 			type: 'object',
 			definitions: {
@@ -435,7 +435,7 @@ suite('JSON Schema', () => {
 	test('Resolving in-line $refs automatically for external schemas', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id = 'https://myschemastore/test1';
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			id: 'test://schemas/main',
 			type: 'object',
 			definitions: {
@@ -470,7 +470,7 @@ suite('JSON Schema', () => {
 	test('Clearing External Schemas', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id1 = 'http://myschemastore/test1';
-		const schema1: JSONSchema = {
+		const schema1: JSON5Schema = {
 			type: 'object',
 			properties: {
 				child: {
@@ -480,7 +480,7 @@ suite('JSON Schema', () => {
 		};
 
 		const id2 = 'http://myschemastore/test2';
-		const schema2: JSONSchema = {
+		const schema2: JSON5Schema = {
 			type: 'object',
 			properties: {
 				child: {
@@ -530,7 +530,7 @@ suite('JSON Schema', () => {
 		});
 
 		const id2 = 'http://myschemastore/myschemafoo';
-		const schema2: JSONSchema = {
+		const schema2: JSON5Schema = {
 			type: 'object',
 			properties: {
 				child: {
@@ -660,14 +660,14 @@ suite('JSON Schema', () => {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id0 = "foo://bar/bar0";
 		const id1 = "foo://bar/bar1";
-		const schema0: JSONSchema = {
+		const schema0: JSON5Schema = {
 			"allOf": [
 				{
 					$ref: id1
 				}
 			]
 		};
-		const schema1: JSONSchema = {
+		const schema1: JSON5Schema = {
 			$ref: "#/definitions/foo",
 			definitions: {
 				foo: {
@@ -679,7 +679,7 @@ suite('JSON Schema', () => {
 		const fsm0 = service.registerExternalSchema(id0, ['*.json'], schema0);
 		const fsm1 = service.registerExternalSchema(id1, [], schema1);
 		return fsm0.getResolvedSchema().then((fs0) => {
-			assert.equal((<JSONSchema>fs0?.schema.allOf?.[0]).type, 'object');
+			assert.equal((<JSON5Schema>fs0?.schema.allOf?.[0]).type, 'object');
 		});
 
 	});
@@ -729,7 +729,7 @@ suite('JSON Schema', () => {
 	test('$refs with encoded characters', async function () {
 		const service = new SchemaService.JSON5SchemaService(newMockRequestService(), workspaceContext);
 		const id0 = "foo://bar/bar0";
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			definitions: {
 				'Foo<number>': {
 					type: 'object',
@@ -745,7 +745,7 @@ suite('JSON Schema', () => {
 		const fsm0 = service.registerExternalSchema(id0, ['*.json'], schema);
 		return fsm0.getResolvedSchema().then((fs0) => {
 			assert.deepEqual(fs0.errors, []);
-			assert.equal((<JSONSchema>fs0?.schema.properties?.p2).type, 'object');
+			assert.equal((<JSON5Schema>fs0?.schema.properties?.p2).type, 'object');
 		});
 
 	});
@@ -893,7 +893,7 @@ suite('JSON Schema', () => {
 		const aSchemaURI1 = "http://foo/a.schema.json";
 		const bSchemaURI1 = "http://foo/b.schema.json";
 
-		const schemas: { [uri: string]: JSONSchema } = {
+		const schemas: { [uri: string]: JSON5Schema } = {
 			[mainSchemaURI]: {
 				type: 'object',
 				properties: {

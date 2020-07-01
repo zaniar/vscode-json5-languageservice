@@ -5,16 +5,16 @@
 
 import * as Parser from '../parser/json5Parser';
 import * as SchemaService from './json5SchemaService';
-import { JSONWorkerContribution } from '../json5Contributions';
+import { JSON5WorkerContribution } from '../json5Contributions';
 import { TextDocument, PromiseConstructor, Thenable, Position, Range, Hover, MarkedString } from '../json5LanguageTypes';
 
-export class JSONHover {
+export class JSON5Hover {
 
 	private schemaService: SchemaService.IJSON5SchemaService;
-	private contributions: JSONWorkerContribution[];
+	private contributions: JSON5WorkerContribution[];
 	private promise: PromiseConstructor;
 
-	constructor(schemaService: SchemaService.IJSON5SchemaService, contributions: JSONWorkerContribution[] = [], promiseConstructor: PromiseConstructor) {
+	constructor(schemaService: SchemaService.IJSON5SchemaService, contributions: JSON5WorkerContribution[] = [], promiseConstructor: PromiseConstructor) {
 		this.schemaService = schemaService;
 		this.contributions = contributions;
 		this.promise = promiseConstructor || Promise;

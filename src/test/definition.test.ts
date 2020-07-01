@@ -5,11 +5,11 @@
 
 import * as assert from 'assert';
 
-import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
+import { getLanguageService, JSON5Schema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
 import { repeat } from '../utils/strings';
 import { DefinitionLink } from 'vscode-languageserver-types';
 
-suite('JSON Find Definitions', () => {
+suite('JSON5 Find Definitions', () => {
 	const testFindDefinitionFor = function (value: string, expected: {offset: number, length: number} | null): PromiseLike<void> {
 		const offset = value.indexOf('|');
 		value = value.substr(0, offset) + value.substr(offset + 1);

@@ -8,7 +8,7 @@ import * as assert from 'assert';
 
 const applyEdits = TextDocument.applyEdits;
 
-suite('JSON Formatter', () => {
+suite('JSON5 Formatter', () => {
 
 	const ls = getLanguageService({ clientCapabilities: ClientCapabilities.LATEST });
 

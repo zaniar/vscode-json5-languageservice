@@ -155,7 +155,7 @@ export function asSchema(schema: JSON5SchemaRef | undefined): JSON5Schema | unde
 	return schema;
 }
 
-export interface JSONDocumentConfig {
+export interface JSON5DocumentConfig {
 	collectComments?: boolean;
 }
 
@@ -957,7 +957,7 @@ function validate(n: ASTNode | undefined, schema: JSON5Schema, validationResult:
 }
 
 
-export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): JSON5Document {
+export function parse(textDocument: TextDocument, config?: JSON5DocumentConfig): JSON5Document {
 
 	const problems: Diagnostic[] = [];
 	let lastProblemOffset = -1;
@@ -1253,7 +1253,7 @@ export function parse(textDocument: TextDocument, config?: JSONDocumentConfig): 
 	if (token !== Json5.SyntaxKind.EOF) {
 		_root = _parseValue(_root);
 		if (!_root) {
-			_error(localize('Invalid symbol', 'Expected a JSON object, array or literal.'), ErrorCode.Undefined);
+			_error(localize('Invalid symbol', 'Expected a JSON5 object, array or literal.'), ErrorCode.Undefined);
 		} else if (scanner.getToken() !== Json5.SyntaxKind.EOF) {
 			_error(localize('End of file expected', 'End of file expected.'), ErrorCode.Undefined);
 		}

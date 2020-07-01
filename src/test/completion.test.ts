@@ -5,7 +5,7 @@
 
 import * as assert from 'assert';
 
-import { getLanguageService, JSONSchema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
+import { getLanguageService, JSON5Schema, TextDocument, ClientCapabilities, CompletionList, CompletionItemKind, Position, MarkupContent } from '../json5LanguageService';
 import { repeat } from '../utils/strings';
 
 const applyEdits = TextDocument.applyEdits;
@@ -47,9 +47,9 @@ const assertCompletion = function (completions: CompletionList, expected: ItemDe
 	}
 };
 
-suite('JSON Completion', () => {
+suite('JSON5 Completion', () => {
 
-	const testCompletionsFor = function (value: string, schema: JSONSchema | null, expected: { count?: number, items?: ItemDescription[] }, clientCapabilities = ClientCapabilities.LATEST): PromiseLike<void> {
+	const testCompletionsFor = function (value: string, schema: JSON5Schema | null, expected: { count?: number, items?: ItemDescription[] }, clientCapabilities = ClientCapabilities.LATEST): PromiseLike<void> {
 		const offset = value.indexOf('|');
 		value = value.substr(0, offset) + value.substr(offset + 1);
 
@@ -163,7 +163,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Complete property with schema', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'a': {
@@ -250,7 +250,7 @@ suite('JSON Completion', () => {
 
 	test('Complete value with schema', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'a': {
@@ -290,7 +290,7 @@ suite('JSON Completion', () => {
 
 	test('Complete array value with schema', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'c': {
@@ -324,7 +324,7 @@ suite('JSON Completion', () => {
 
 	test('Complete array value with schema 2', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'c': {
@@ -363,7 +363,7 @@ suite('JSON Completion', () => {
 
 	test('Complete array value with schema 3 (issue #81459)', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: "object",
 			properties: {
 				"a": {
@@ -398,7 +398,7 @@ suite('JSON Completion', () => {
 
 	test('Complete value with schema: booleans, null', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'a': {
@@ -429,7 +429,7 @@ suite('JSON Completion', () => {
 	test('Complete with nested schema', async function () {
 
 		const content = '{|}';
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			oneOf: [{
 				type: 'object',
 				properties: {
@@ -457,7 +457,7 @@ suite('JSON Completion', () => {
 
 	test('Complete with required anyOf', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			anyOf: [{
 				type: 'object',
 				required: ['a', 'b'],
@@ -505,7 +505,7 @@ suite('JSON Completion', () => {
 
 	test('Complete with anyOf', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			anyOf: [{
 				type: 'object',
 				properties: {
@@ -546,7 +546,7 @@ suite('JSON Completion', () => {
 
 	test('Complete with oneOf', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			oneOf: [{
 				type: 'object',
 				allOf: [{
@@ -609,7 +609,7 @@ suite('JSON Completion', () => {
 
 	test('Complete with oneOf and enums', async function () {
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			oneOf: [{
 				type: 'object',
 				properties: {
@@ -721,7 +721,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Escaping with schema', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'{\\}': {
@@ -747,7 +747,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Escaping with schema - #13716', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'url': {
@@ -766,7 +766,7 @@ suite('JSON Completion', () => {
 	test('Sanititize', async function () {
 		const longLabel = repeat('abcd', 20);
 
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'a\nb': {
@@ -787,7 +787,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Enum and defaults', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				prop: {
@@ -810,7 +810,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('examples', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				prop: {
@@ -833,7 +833,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Const', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				prop: {
@@ -863,7 +863,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('$schema', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 		};
 		await testCompletionsFor('{ "$sc| }', null, {
@@ -894,13 +894,13 @@ suite('JSON Completion', () => {
 	});
 
 	test('root default proposals', async function () {
-		const schema1: JSONSchema = {
+		const schema1: JSON5Schema = {
 			type: 'object',
 			default: {
 				hello: 'world'
 			}
 		};
-		const schema2: JSONSchema = {
+		const schema2: JSON5Schema = {
 			anyOf: [
 				{
 					default: {}
@@ -932,7 +932,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Default snippet', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'array',
 			items: {
 				type: 'object',
@@ -952,7 +952,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Deprecation message', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -974,7 +974,7 @@ suite('JSON Completion', () => {
 
 
 	test('Enum description', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -1003,7 +1003,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Enum markdown description', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -1087,7 +1087,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('DoNotSuggest', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -1111,7 +1111,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('suggestSortText', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				'prop1': {
@@ -1135,7 +1135,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Primary property', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			oneOf: [{
 
@@ -1182,7 +1182,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Property with values', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			type: 'object',
 			properties: {
 				object: {
@@ -1256,7 +1256,7 @@ suite('JSON Completion', () => {
 	});
 
 	test('Filering same label, issue #1062', async function () {
-		const schema: JSONSchema = {
+		const schema: JSON5Schema = {
 			"type": "array",
 			"items": {
 				"enum": [

@@ -6,7 +6,7 @@
 import { stringifyObject } from '../utils/json5';
 import * as assert from 'assert';
 
-suite('JSON Stringify', () => {
+suite('JSON5 Stringify', () => {
 
 	test('Object', function () {
 		const obj = {

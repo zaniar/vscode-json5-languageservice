@@ -7,17 +7,17 @@ import * as assert from 'assert';
 import * as Parser from '../parser/json5Parser';
 import * as SchemaService from '../services/json5SchemaService';
 import * as JsonSchema from '../json5Schema';
-import { JSONHover } from '../services/json5Hover';
+import { JSON5Hover } from '../services/json5Hover';
 
 import { Hover, Position, MarkedString, TextDocument } from '../json5LanguageService';
 
-suite('JSON Hover', () => {
+suite('JSON5 Hover', () => {
 
 	function testComputeInfo(value: string, schema: JsonSchema.JSON5Schema, position: Position): PromiseLike<Hover> {
 		const uri = 'test://test.json';
 
 		const schemaService = new SchemaService.JSON5SchemaService(requestService);
-		const hoverProvider = new JSONHover(schemaService, [], Promise);
+		const hoverProvider = new JSON5Hover(schemaService, [], Promise);
 		const id = "http://myschemastore/test1";
 		schemaService.registerExternalSchema(id, ["*.json"], schema);
 

@@ -13,7 +13,7 @@ import { isDefined, isBoolean } from '../utils/objects';
 
 const localize = nls.loadMessageBundle();
 
-export class JSONValidation {
+export class JSON5Validation {
 
 	private jsonSchemaService: JSON5SchemaService;
 	private promise: PromiseConstructor;
@@ -91,7 +91,7 @@ export class JSONValidation {
 			}
 
 			if (typeof commentSeverity === 'number') {
-				const message = localize('InvalidCommentToken', 'Comments are not permitted in JSON.');
+				const message = localize('InvalidCommentToken', 'Comments are not permitted in JSON5.');
 				jsonDocument.comments.forEach(c => {
 					addProblem(Diagnostic.create(c, message, commentSeverity, ErrorCode.CommentNotPermitted));
 				});

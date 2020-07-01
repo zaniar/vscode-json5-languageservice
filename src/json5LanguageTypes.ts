@@ -2,11 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector } from './json5Contributions';
+import { JSON5WorkerContribution, JSON5Path, Segment, CompletionsCollector } from './json5Contributions';
 import { JSON5Schema } from './json5Schema';
 import { MarkupKind } from 'vscode-languageserver-types';
 
-export { JSONWorkerContribution, JSON5Path, Segment, CompletionsCollector, JSON5Schema as JSONSchema };
+export { JSON5WorkerContribution, JSON5Path, Segment, CompletionsCollector, JSON5Schema as JSON5Schema };
 export { TextDocument } from 'vscode-languageserver-textdocument';
 export * from 'vscode-languageserver-types';
 
@@ -195,7 +195,7 @@ export interface LanguageServiceParams {
 	/**
 	 * An optional set of completion and hover participants.
 	 */
-	contributions?: JSONWorkerContribution[];
+	contributions?: JSON5WorkerContribution[];
 	/**
 	 * A promise constructor. If not set, the ES5 Promise will be used.
 	 */

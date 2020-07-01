@@ -6,7 +6,7 @@
 import { Range, Position, SelectionRange, TextDocument } from '../json5LanguageTypes';
 
 import { JSON5Document } from '../parser/json5Parser';
-import { SyntaxKind, createScanner } from 'jsonc-parser';
+import { SyntaxKind, createScanner } from 'json5-parser';
 
 export function getSelectionRanges(document: TextDocument, positions: Position[], doc: JSON5Document): SelectionRange[] {
 

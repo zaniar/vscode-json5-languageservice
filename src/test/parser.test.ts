@@ -8,7 +8,7 @@ import { getNodePath, getNodeValue, JSON5Document } from '../parser/json5Parser'
 import * as JsonSchema from '../json5Schema';
 import { TextDocument, Range, ErrorCode, ASTNode, ObjectASTNode, getLanguageService } from '../json5LanguageService';
 
-suite('JSON Parser', () => {
+suite('JSON5 Parser', () => {
 
 	function isValid(json: string): void {
 		const { jsonDoc } = toDocument(json);
@@ -23,7 +23,7 @@ suite('JSON Parser', () => {
 			assert.deepEqual(jsonDoc.syntaxErrors.map(e => e.code), expectedErrors, json);
 		}
 		// these should be caught by the parser, not the last-ditch guard
-		assert.notEqual(jsonDoc.syntaxErrors[0].message, 'Invalid JSON', json);
+		assert.notEqual(jsonDoc.syntaxErrors[0].message, 'Invalid JSON5', json);
 	}
 
 	function toDocument(text: string): { textDoc: TextDocument, jsonDoc: JSON5Document } {

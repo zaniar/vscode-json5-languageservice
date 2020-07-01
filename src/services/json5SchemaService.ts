@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as Json from 'jsonc-parser';
+import * as Json from 'json5-parser';
 import { JSON5Schema, JSON5SchemaMap, JSON5SchemaRef } from '../json5Schema';
 import { URI } from 'vscode-uri';
 import * as Strings from '../utils/strings';

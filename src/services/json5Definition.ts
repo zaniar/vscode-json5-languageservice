@@ -44,7 +44,7 @@ function isRef(node: ASTNode): boolean {
 }
 
 function findTargetNode(doc: JSON5Document, path: string): ASTNode | null {
-	const tokens = parseJSONPointer(path);
+	const tokens = parseJSON5Pointer(path);
 	if (!tokens) {
 		return null;
 	}
@@ -79,7 +79,7 @@ function findNode(pointer: string[], node: ASTNode | null | undefined): ASTNode 
 	return null;
 }
 
-function parseJSONPointer(path: string): string[] | null {
+function parseJSON5Pointer(path: string): string[] | null {
 	if (path === "#") {
 		return [];
 	}

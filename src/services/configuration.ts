@@ -17,7 +17,7 @@ export const schemaContributions: ISchemaContributions = {
 		},
 		// bundle the schema-schema to include (localized) descriptions
 		'http://json-schema.org/draft-04/schema#': {
-			'title': localize('schema.json', 'Describes a JSON file using a schema. See json-schema.org for more info.'),
+			'title': localize('schema.json', 'Describes a JSON5 file using a schema. See json-schema.org for more info.'),
 			'$schema': 'http://json-schema.org/draft-04/schema#',
 			'definitions': {
 				'schemaArray': {
@@ -301,7 +301,7 @@ export const schemaContributions: ISchemaContributions = {
 			'default': {}
 		},
 		'http://json-schema.org/draft-07/schema#': {
-			'title': localize('schema.json', 'Describes a JSON file using a schema. See json-schema.org for more info.'),
+			'title': localize('schema.json', 'Describes a JSON5 file using a schema. See json-schema.org for more info.'),
 			'definitions': {
 				'schemaArray': {
 					'type': 'array',
@@ -506,7 +506,7 @@ const descriptions: { [prop: string]: string } = {
 	$ref: localize('schema.json5.$ref', "Reference a definition hosted on any location."),
 	$comment: localize('schema.json5.$comment', "Comments from schema authors to readers or maintainers of the schema."),
 	readOnly: localize('schema.json5.readOnly', "Indicates that the value of the instance is managed exclusively by the owning authority."),
-	examples: localize('schema.json5.examples', "Sample JSON values associated with a particular schema, for the purpose of illustrating usage."),
+	examples: localize('schema.json5.examples', "Sample JSON5 values associated with a particular schema, for the purpose of illustrating usage."),
 	contains: localize('schema.json5.contains', "An array instance is valid against \"contains\" if at least one of its elements is valid against the given schema."),
 	propertyNames: localize('schema.json5.propertyNames', "If the instance is an object, this keyword validates if every property name in the instance validates against the provided schema."),
 	const: localize('schema.json5.const', "An instance validates successfully against this keyword if its value is equal to the value of the keyword."),
